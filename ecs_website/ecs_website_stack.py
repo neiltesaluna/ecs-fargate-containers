@@ -23,12 +23,17 @@ class EcsWebsiteStack(cdk.Stack):
 
         ecs_taskdefinition = aws_ecs.FargateTaskDefinition(self, "EcsTaskDefinition")
 
-        ecs_container = ecs_taskdefinition.add_container("ecsContainer",
-            image=aws_ecs.ContainerImage.from_registry('tomcat:9.0.45-jdk8-corretto'),
-            command=["mv webapps.dist/* webapps"],
+        ecs_taskdefinition.add_container("ecsContainer",
+            image=aws_ecs.ContainerImage.from_registry('coderaiser/cloudcmd:latest'),
             cpu=256,
             memory_limit_mib=512,
-            port_mappings=[aws_ecs.PortMapping(container_port=8080)]
+            port_mappings=[aws_ecs.PortMapping(container_port=8000)]
+        )
+
+        ecs_fargate_service = aws_ecs.FargateService(
+            self, "FargateService", 
+            cluster=ecs_cluster,
+            task_definition=ecs_taskdefinition
         )
 
         ecs_application_lb = aws_elasticloadbalancingv2.ApplicationLoadBalancer(
@@ -39,17 +44,12 @@ class EcsWebsiteStack(cdk.Stack):
 
         alb_listener = ecs_application_lb.add_listener("AlbListener", port=80)
 
-        ecs_fargate_service = aws_ecs.FargateService(
-            self, "FargateService", 
-            cluster=ecs_cluster,
-            task_definition=ecs_taskdefinition
-        )
-
-        ecs_fargate_service.register_load_balancer_targets(aws_ecs.EcsTarget(
-            container_name="ecsContainer",
-            container_port=8080,
-            new_target_group_id="ecs_target",
-            listener=aws_ecs.ListenerConfig.application_listener(listener=alb_listener))
+        ecs_tg = alb_listener.add_targets("EcsTG",
+            port=80,
+            targets=[ecs_fargate_service.load_balancer_target(
+                container_name="ecsContainer",
+                container_port=8000
+            )]
         )
 
         cdk.CfnOutput(
