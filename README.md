@@ -1,17 +1,22 @@
 
-# Welcome to your CDK Python project!
+# ECS Fargate Website
 
-This is a blank project for Python development with CDK.
+This project is a template which allows you to deploy the infrastructure required on AWS, to host an image pulled from a repository. Here we are using **coderaiser/cloudcmd:latest**
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+You can declare the image you want to spin up in:  
+**ecs_website/ecs_website_stack.py**.
+```
+ecs_taskdefinition.add_container("ecsContainer",
+    image=aws_ecs.ContainerImage.from_registry('coderaiser/cloudcmd:latest'), # change image here
+    cpu=256,
+    memory_limit_mib=512,
+    port_mappings=[aws_ecs.PortMapping(container_port=8000)]
+)
+```
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+*Note this repository assumes that you have installed [AWS CLI](https://aws.amazon.com/cli/), so that your AWS Account will be used for deployment.* 
 
+## Setting up the environment
 To manually create a virtualenv on MacOS and Linux:
 
 ```
@@ -34,20 +39,34 @@ If you are a Windows platform, you would activate the virtualenv like this:
 Once the virtualenv is activated, you can install the required dependencies.
 
 ```
-$ pip install -r requirements.txt
+(.venv) username > pip install -r requirements.txt
 ```
 
 At this point you can now synthesize the CloudFormation template for this code.
 
 ```
-$ cdk synth
+(.venv) username > cdk synth
 ```
+
+You can also check out the CloudFormation template generated using `cdk synth` in the JSON file below:  
+**cdk.out/EcsWebsiteStack.template.json**
+
+
+## Deploying the website on AWS
+
+Now that all the dependencies are installed for AWS CDK to deploy on AWS. Run the following command:
+
+```
+(.venv) username > cdk deploy
+```
+
+## Useful Information
 
 To add additional dependencies, for example other CDK libraries, just add
 them to your `setup.py` file and rerun the `pip install -r requirements.txt`
 command.
 
-## Useful commands
+### More Commands
 
  * `cdk ls`          list all stacks in the app
  * `cdk synth`       emits the synthesized CloudFormation template
@@ -55,4 +74,3 @@ command.
  * `cdk diff`        compare deployed stack with current state
  * `cdk docs`        open CDK documentation
 
-Enjoy!
