@@ -13,7 +13,7 @@ class EcsWebsiteStack(cdk.Stack):
     def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        ecs_vpc = aws_ec2.Vpc(self, "EcsVPC", max_azs=2)
+        ecs_vpc = aws_ec2.Vpc(self, "EcsVPC", max_azs=2)    # minimum number of AZs is 2 for this stack to deploy
         ecs_vpc.apply_removal_policy(cdk.RemovalPolicy.DESTROY)
 
         ecs_cluster = aws_ecs.Cluster(
@@ -24,10 +24,10 @@ class EcsWebsiteStack(cdk.Stack):
         ecs_taskdefinition = aws_ecs.FargateTaskDefinition(self, "EcsTaskDefinition")
 
         ecs_taskdefinition.add_container("ecsContainer",
-            image=aws_ecs.ContainerImage.from_registry('coderaiser/cloudcmd:latest'),
+            image=aws_ecs.ContainerImage.from_registry('coderaiser/cloudcmd:latest'),   # change image here
             cpu=256,
             memory_limit_mib=512,
-            port_mappings=[aws_ecs.PortMapping(container_port=8000)]
+            port_mappings=[aws_ecs.PortMapping(container_port=8000)]    # container port used for the image
         )
 
         ecs_fargate_service = aws_ecs.FargateService(
@@ -48,7 +48,7 @@ class EcsWebsiteStack(cdk.Stack):
             port=80,
             targets=[ecs_fargate_service.load_balancer_target(
                 container_name="ecsContainer",
-                container_port=8000
+                container_port=8000     # container port used for the image
             )]
         )
 
