@@ -49,9 +49,7 @@ class EcsWebsiteStack(cdk.Stack):
             container_name="ecsContainer",
             container_port=8080,
             new_target_group_id="ecs_target",
-            listener=aws_ecs.ListenerConfig.application_listener(listener=alb_listener,
-                protocol=aws_elasticloadbalancingv2.ApplicationProtocol.HTTP
-            ))
+            listener=aws_ecs.ListenerConfig.application_listener(listener=alb_listener))
         )
 
         cdk.CfnOutput(
