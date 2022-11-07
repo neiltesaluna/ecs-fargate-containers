@@ -3,6 +3,10 @@
 
 This project is a template which allows you to deploy the infrastructure required on AWS, to host an image pulled from a repository. Here we are using **coderaiser/cloudcmd:latest**
 
+Resource links: 
+- https://docs.aws.amazon.com/cdk/v2/guide/hello_world.html
+- https://github.com/neiltesaluna/aws-cdk-getting-started
+
 You can declare the image you want to spin up in:  
 **ecs_website/ecs_website_stack.py**.
 ```
