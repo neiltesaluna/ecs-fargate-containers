@@ -1,5 +1,5 @@
 
-# ECS Fargate Website
+# ECS Fargate Website using AWS CDK
 
 This project is a template which allows you to deploy the infrastructure required on AWS, to host an image pulled from a repository. Here we are using **coderaiser/cloudcmd:latest**
 
